@@ -29,6 +29,10 @@ class X8servo
 
 		void ReadMotorStatusError(unsigned int _ID);
 
+		void ReadEncoderData(unsigned int _ID);
+
+		void WriteEncoderOffset(unsigned int _ID, uint16_t offset);
+
 		void MotorOff(unsigned int _ID);
 
 		void MotorStop(unsigned int _ID);
@@ -45,11 +49,19 @@ class X8servo
 
 		void PositionControl4(unsigned int _ID, float Deg, float DPS, unsigned char Direction);
 
+		uint8_t Pos_Kp[10];
+		uint8_t Pos_Ki[10];
+		uint8_t Vel_Kp[10];
+		uint8_t Vel_Ki[10];
+		uint8_t Tor_Kp[10];
+		uint8_t Tor_Ki[10];
+		uint16_t EncoderPosition[10];
+		uint16_t EncoderOffset[10];
+		uint16_t EncoderOriginal[10]; 
 
 	private:
 
 		unsigned int gearRatio = 6;
-
 
 };
 

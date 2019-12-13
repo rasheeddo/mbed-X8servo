@@ -4,10 +4,10 @@
         "size": {
             ".data-delta": 0, 
             ".text-delta": 0, 
-            ".bss": 544, 
+            ".bss": 512, 
             ".data": 0, 
             ".bss-delta": 0, 
-            ".text": 612
+            ".text": 880
         }
     }, 
     {
@@ -18,7 +18,7 @@
             ".bss": 30, 
             ".data": 11, 
             ".bss-delta": 0, 
-            ".text": 160
+            ".text": 186
         }
     }, 
     {
@@ -29,7 +29,7 @@
             ".bss": 89, 
             ".data": 2472, 
             ".bss-delta": 0, 
-            ".text": 29880
+            ".text": 29920
         }
     }, 
     {
@@ -59,10 +59,10 @@
         "size": {
             ".data-delta": 0, 
             ".text-delta": 0, 
-            ".bss": 4, 
+            ".bss": 124, 
             ".data": 8, 
             ".bss-delta": 0, 
-            ".text": 136
+            ".text": 380
         }
     }, 
     {
@@ -84,7 +84,7 @@
             ".bss": 0, 
             ".data": 0, 
             ".bss-delta": 0, 
-            ".text": 2032
+            ".text": 1926
         }
     }, 
     {
@@ -117,7 +117,7 @@
             ".bss": 130, 
             ".data": 8, 
             ".bss-delta": 0, 
-            ".text": 1760
+            ".text": 1768
         }
     }, 
     {
@@ -128,7 +128,7 @@
             ".bss": 313, 
             ".data": 260, 
             ".bss-delta": 0, 
-            ".text": 5994
+            ".text": 6090
         }
     }, 
     {
@@ -155,10 +155,10 @@
     }, 
     {
         "summary": {
-            "static_ram": 27512, 
+            "static_ram": 27600, 
             "total_flash_delta": 0, 
             "static_ram_delta": 0, 
-            "total_flash": 74720
+            "total_flash": 75296
         }
     }
 ]

@@ -200,7 +200,47 @@ void X8servo::ReadMotorStatusError(unsigned int _ID){
 	}
 
 }
+void X8servo::ReadEncoderData(unsigned int _ID){
 
+	pc.printf("ReadEncoderData\n");
+	unsigned char reply[8];
+	unsigned char EncoderPosByte[2];
+	unsigned char EncoderOriByte[2];
+	unsigned char EncoderOffByte[2];
+
+	char CommandByte[8] = {0x90, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+	canWrite(_ID, CommandByte);
+
+	if (readReply(_ID, reply)){
+
+		EncoderPosByte[0] = reply[2];
+		EncoderPosByte[1] = reply[3];
+		EncoderOriByte[0] = reply[4];
+		EncoderOriByte[1] = reply[5];
+		EncoderOffByte[0] = reply[6];
+		EncoderOffByte[1] = reply[7];
+
+		EncoderPosition[_ID-320-1] = ByteDataToInt16(EncoderPosByte);
+		EncoderOriginal[_ID-320-1] = ByteDataToInt16(EncoderOriByte);
+		EncoderOffset[_ID-320-1] = ByteDataToInt16(EncoderOffByte);
+
+	}
+
+	CANErrorCheck();
+
+}
+
+void X8servo::WriteEncoderOffset(unsigned int _ID, uint16_t offset){
+
+	pc.printf("WriteEncoderOffset\n");
+	unsigned char offsetByte[2];
+	Int16ToByteData(offset, offsetByte);
+
+	char CommandByte[8] = {0x91, 0x00, 0x00, 0x00, 0x00, 0x00, offsetByte[1], offsetByte[0]};
+	canWrite(_ID, CommandByte);
+	readReplyFlush(_ID);
+	CANErrorCheck();
+}
 
 void X8servo::MotorOff(unsigned int _ID){
 	pc.printf("MotorOff\n");
