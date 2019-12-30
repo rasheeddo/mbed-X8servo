@@ -2,10 +2,17 @@
 #include "X8servo.hpp"
 //#include "Timer.h"
 
+InterruptIn hallInterrupt1(PE_9, PullUp);
+InterruptIn hallInterrupt2(PE_11, PullUp);
+DigitalOut led(LED3);
+
 X8servo servo;
 unsigned int ID = 0x141;
 unsigned int ID1 = 0x141;
 unsigned int ID2 = 0x142;
+
+bool atZero = false;
+float pi =  3.141592;
 //Timer t;
 
 /*
@@ -32,51 +39,105 @@ void servo2_worker(){
 	}
 }
 */
+void arrivedZero(){
+	led = !led;		// just led out to see status
+	atZero = true;  // 
+}
+
+void gotoZero(unsigned int id){
+
+	float incTime = 0.0;
+	float speed = 90.0;
+	float delay = 0.0002;
+	uint16_t offset;
+
+	while (!atZero){
+		speed = 90.0*sin(2.0*pi*incTime);  // randomly move with sinusoidal wave
+		servo.SpeedControl(id, speed);	   // used speed control because smoother
+		incTime = incTime + delay;
+		wait(0.006+delay);
+		}
+	servo.MotorOff(id);					// this will kill the motor power
+	wait(0.5);
+	servo.PositionControl2(id,0.0, 60.0); // when motor start again it will go to the nearest zero
+										   // and that is the point that we set at first in RMD config
+	wait(1);
+	atZero = false; 					   // set this flag to false to allow another id to use
+}
 
 int main()
 {
+	hallInterrupt1.rise(&arrivedZero);
+	hallInterrupt1.fall(&arrivedZero);
+
+	hallInterrupt2.rise(&arrivedZero);
+	hallInterrupt2.fall(&arrivedZero);
+
 	float inc = 0.0;
 	float speed;
 	float pos = 0.0;
-	float pi =  3.141592;
 	float delay = 0.001;
+
+	gotoZero(ID1);
+	wait(0.5);
+	gotoZero(ID2);
+	printf("done\n");
 
 	//servo1_thread.start(servo1_worker);
 	//servo2_thread.start(servo2_worker);
 
 	
 	//servo.PositionControl2(ID1,0.0, 360.0);  // time used 6~7ms
+	//wait_ms(1000);
+	/*
+	servo.ReadMultiturn(ID1);
+	servo.ReadEncoderData(ID1);
+	printf("EncoderPosition ID%d: %d\n",(ID1-320), servo.EncoderPosition[ID1-320-1]);
+	printf("EncoderOriginal ID%d: %d\n",(ID1-320), servo.EncoderOriginal[ID1-320-1]);
+	printf("EncoderOffset ID%d: %d\n",(ID1-320), servo.EncoderOffset[ID1-320-1]);
+	*/
 	//servo.PositionControl2(ID2,0.0, 360.0);
 	//servo.SpeedControl(ID, 1500.0);
 
+	
+	//servo.PositionControl2(ID1,0.0, 360.0);
+	//servo.PositionControl2(ID2,0.0, 360.0);
+	//wait(2.0);
 	/*
-	servo.PositionControl2(ID1,0.0, 360.0);
-	servo.PositionControl2(ID2,0.0, 360.0);
-	wait(2.0);
-
 	servo.ReadEncoderData(ID1);
 	printf("EncoderPosition ID%d: %d\n",(ID1-320), servo.EncoderPosition[ID1-320-1]);
 	printf("EncoderOriginal ID%d: %d\n",(ID1-320), servo.EncoderOriginal[ID1-320-1]);
 	printf("EncoderOffset ID%d: %d\n",(ID1-320), servo.EncoderOffset[ID1-320-1]);
 
-	servo.ReadEncoderData(ID2);
-	printf("EncoderPosition ID%d: %d\n",(ID2-320), servo.EncoderPosition[ID2-320-1]);
-	printf("EncoderOriginal ID%d: %d\n",(ID2-320), servo.EncoderOriginal[ID2-320-1]);
-	printf("EncoderOffset ID%d: %d\n",(ID2-320), servo.EncoderOffset[ID2-320-1]);
-
-	servo.WriteEncoderOffset(ID1, 0);
+	offset = servo.EncoderPosition[ID1-320-1];
+	//servo.ReadEncoderData(ID2);
+	//printf("EncoderPosition ID%d: %d\n",(ID2-320), servo.EncoderPosition[ID2-320-1]);
+	//printf("EncoderOriginal ID%d: %d\n",(ID2-320), servo.EncoderOriginal[ID2-320-1]);
+	//printf("EncoderOffset ID%d: %d\n",(ID2-320), servo.EncoderOffset[ID2-320-1]);
+	
+	servo.WriteEncoderOffset(ID1, offset);
 	wait(1.0);
+
 	servo.ReadEncoderData(ID1);
 	printf("EncoderPosition ID%d: %d\n",(ID1-320), servo.EncoderPosition[ID1-320-1]);
 	printf("EncoderOriginal ID%d: %d\n",(ID1-320), servo.EncoderOriginal[ID1-320-1]);
 	printf("EncoderOffset ID%d: %d\n",(ID1-320), servo.EncoderOffset[ID1-320-1]);
-
+	
+	wait(1.0);
+	servo.PositionControl2(ID1,90.0, 360.0);
+	wait(1.0);
+	servo.PositionControl2(ID1,45.0, 360.0);
+	wait(1.0);
+	servo.PositionControl2(ID1,120.0, 360.0);
 	wait(1.0);
 	servo.PositionControl2(ID1,0.0, 360.0);
-	servo.PositionControl2(ID2,0.0, 360.0);
-	wait(2.0);
+	wait(1.0);
+	
+	servo.ReadEncoderData(ID1);
+	printf("EncoderPosition ID%d: %d\n",(ID1-320), servo.EncoderPosition[ID1-320-1]);
+	printf("EncoderOriginal ID%d: %d\n",(ID1-320), servo.EncoderOriginal[ID1-320-1]);
+	printf("EncoderOffset ID%d: %d\n",(ID1-320), servo.EncoderOffset[ID1-320-1]);
 	*/
-
 
 	while (1){
 
